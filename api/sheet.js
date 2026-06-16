@@ -8,20 +8,23 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { name, phone, source, course, date } = req.body;
+  const { name, phone, source, type, course, date } = req.body;
 
   if (!name || !phone) {
     return res.status(400).json({ error: 'Name and phone required' });
   }
 
   try {
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-    const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    // Decode service account from base64 env var
+    const saB64 = process.env.GOOGLE_SA_BASE64;
+    if (!saB64) throw new Error('Missing GOOGLE_SA_BASE64');
+
+    const sa = JSON.parse(Buffer.from(saB64, 'base64').toString('utf8'));
+    const privateKey = sa.private_key;
+    const serviceAccountEmail = sa.client_email;
     const sheetId = process.env.GOOGLE_SHEET_ID;
 
-    if (!privateKey || !serviceAccountEmail || !sheetId) {
-      throw new Error('Missing Google credentials env vars');
-    }
+    if (!sheetId) throw new Error('Missing GOOGLE_SHEET_ID');
 
     const jwt = new JWT({
       email: serviceAccountEmail,
@@ -36,7 +39,8 @@ module.exports = async function handler(req, res) {
     await sheet.addRow({
       Имя: name,
       Телефон: phone,
-      Источник: source || 'site',
+      Источник: source || type || 'site',
+      Тип: type === 'consultation' ? 'Консультация' : 'Курс',
       Курс: course || '',
       Дата: date || new Date().toLocaleString('ru-RU')
     });
