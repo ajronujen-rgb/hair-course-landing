@@ -409,6 +409,20 @@ section {
   font-style: normal;
 }
 
+.review--with-photo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.review__photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .review p {
   margin-bottom: 16px;
 }
@@ -525,11 +539,11 @@ section {
   }
 
   .program__grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .portfolio__grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .includes__grid {
@@ -538,6 +552,11 @@ section {
 
   .reviews__grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .review--with-photo {
+    flex-direction: column;
+    text-align: center;
   }
 }
 
