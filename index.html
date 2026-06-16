@@ -39,10 +39,11 @@
           <form class="form form--hero" id="formHero">
             <input type="text" name="name" placeholder="Имя" required>
             <input type="tel" name="phone" placeholder="Телефон" required>
-            <input type="hidden" name="source" value="hero">
-            <button type="submit" class="btn btn--accent">Записаться на курс</button>
+            <div class="form__buttons">
+              <button type="submit" class="btn btn--accent" data-type="course">Записаться на курс</button>
+              <button type="submit" class="btn btn--outline" data-type="consultation">Бесплатная консультация</button>
+            </div>
             <p class="form__status" id="formHeroStatus"></p>
-            <p class="form__note">Бесплатная консультация. Без спама.</p>
           </form>
         </div>
         <div class="hero__image">
@@ -210,8 +211,10 @@
         <form class="form form--contact" id="formContact">
           <input type="text" name="name" placeholder="Имя" required>
           <input type="tel" name="phone" placeholder="Телефон" required>
-          <input type="hidden" name="source" value="footer">
-          <button type="submit" class="btn btn--accent">Оставить заявку</button>
+          <div class="form__buttons">
+            <button type="submit" class="btn btn--accent" data-type="course">Записаться на курс</button>
+            <button type="submit" class="btn btn--outline" data-type="consultation">Бесплатная консультация</button>
+          </div>
           <p class="form__status" id="formStatus"></p>
         </form>
       </div>

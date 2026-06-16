@@ -13,7 +13,7 @@ nav.querySelectorAll('a').forEach(link => {
   });
 });
 
-async function submitForm(form, statusEl) {
+async function submitForm(form, statusEl, type) {
   const data = Object.fromEntries(new FormData(form));
   statusEl.textContent = 'Отправляем...';
   statusEl.style.color = 'var(--text-light)';
@@ -25,30 +25,42 @@ async function submitForm(form, statusEl) {
       body: JSON.stringify({
         name: data.name,
         phone: data.phone,
-        source: data.source,
+        source: data.source || type,
+        type: type,
         course: 'Курс по наращиванию волос',
         date: new Date().toLocaleString('ru-RU')
       })
     });
 
-    if (!res.ok) throw new Error('server error');
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || 'server error');
 
     form.reset();
-    statusEl.textContent = 'Заявка отправлена! Скоро свяжусь.';
+    statusEl.textContent = '✅ Заявка отправлена! Скоро свяжусь.';
     statusEl.style.color = '#2e7d32';
   } catch (e) {
-    statusEl.textContent = 'Ошибка отправки. Попробуйте ещё раз или напишите в Telegram.';
+    statusEl.textContent = '❌ Ошибка отправки. Попробуйте ещё раз или напишите в Telegram @ajronujen.';
     statusEl.style.color = '#c62828';
     console.error(e);
   }
 }
 
-document.getElementById('formHero').addEventListener('submit', e => {
-  e.preventDefault();
-  submitForm(e.target, document.getElementById('formHeroStatus'));
-});
+function handleFormSubmit(form, statusEl) {
+  return function(e) {
+    e.preventDefault();
+    const btn = e.submitter;
+    const type = btn?.dataset?.type || 'course';
+    submitForm(form, statusEl, type);
+  };
+}
 
-document.getElementById('formContact').addEventListener('submit', e => {
-  e.preventDefault();
-  submitForm(e.target, document.getElementById('formStatus'));
-});
+document.getElementById('formHero').addEventListener('submit', handleFormSubmit(
+  document.getElementById('formHero'),
+  document.getElementById('formHeroStatus')
+));
+
+document.getElementById('formContact').addEventListener('submit', handleFormSubmit(
+  document.getElementById('formContact'),
+  document.getElementById('formStatus')
+));
